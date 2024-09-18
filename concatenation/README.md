@@ -6,10 +6,10 @@
 
 ## Usage
 
-'''bash
+```bash
 kit [-o outfile] infile1 [...infile2....]
 kit [-o outfile]
-'''
+```
 
 ## Features
 
@@ -23,9 +23,9 @@ kit [-o outfile]
 
 To compile the program, simply run:
 
-'''bash
+```bash
 make
-'''
+```
 
 This will produce the `kit` executable.
 
@@ -33,26 +33,26 @@ This will produce the `kit` executable.
 
 1. Concatenate two files:
 
-'''bash
+```bash
 ./kit file1.txt file2.txt
-'''
+```
 
 2. Use standard input with files:
 
-'''bash
+```bash
 echo 'Standard input' | ./kit file1.txt - file2.txt
-'''
+```
 3. Output to a file:
 
-'''bash
+```bash
 ./kit -o output.txt file1.txt file2.txt
-'''
+```
 
 4. Read only from standard input:
 
-'''bash
+```bash
 ./kit
-'''
+```
 
 ## Error Handling
 
@@ -67,9 +67,9 @@ echo 'Standard input' | ./kit file1.txt - file2.txt
 
 A test script `test_kit.sh` is provided to verify the functionality of `kit`. Run it using:
 
-'''bash
+```bash
 ./test_kit.sh
-'''
+```
 
 The test results will be saved in `kit_test_results.txt`.
 
@@ -80,8 +80,8 @@ The repository includes `input.txt`, a ChatGPT-generated passage of 8886 words. 
 
 To test large file handling:
 
-'''bash
+```bash
 ./kit input.txt | wc -c
-'''
+```
 
 This command should output 8886, confirming that `kit` correctly processes the entire file.
