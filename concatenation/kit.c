@@ -65,6 +65,10 @@ int main(int argc, char *argv[]) {
         case 'o':
             outfile = optarg;
             break;
+        case '?':
+            fprintf(stderr, "Usage: %s [-o outfile] [infile1 [infile2 ...]]\n", argv[0]);
+            fprintf(stderr, "       %s [-o outfile]\n", argv[0]);
+            exit(-1);
         }
     }
 
@@ -73,18 +77,17 @@ int main(int argc, char *argv[]) {
 
         if (output_fd == -1) {
             perror("Error opening output file");
-            exit(-1);
+            return -1;
         }
     }else {
         output_fd = STDOUT_FILENO;
     }
 
-    if (optind < argc) { // input files
-        
+    if (optind < argc) { 
         for (int i = optind; i < argc; i++) {
             handle_input(argv[i]);
         }
-    } else {
+    } else { 
         handle_input("-");
     }
 
