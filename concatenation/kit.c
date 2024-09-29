@@ -33,6 +33,7 @@ void handle_input(const char *filename){
         
         if (fd == -1) {
             perror("Error opening input file");
+            fprintf(stderr, "%s\n", filename); // Comments: include the filename in the error message
             exit(-1);
         }
     }
@@ -73,8 +74,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (outfile != NULL) {
-        output_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
+        output_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666); 
+        // Comments: use 0666 instead of 0644 to ensure that the file is created with the correct permissions
         if (output_fd == -1) {
             perror("Error opening output file");
             return -1;

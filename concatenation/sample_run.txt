@@ -1,0 +1,67 @@
+$ make
+make: `kit' is up to date.
+
+
+$ ./kit file1.txt file2.txt
+This is file1
+This is file2
+
+$ echo 'Standard input' | ./kit file1.txt - file2.txt
+This is file1
+Standard input
+This is file2
+
+$ (echo 'Input 1'; echo 'Input 2') | ./kit - - file1.txt
+Input 1
+Input 2
+This is file1
+
+$ ./kit -o output.txt file1.txt file2.txt && cat output.txt
+This is file1
+This is file2
+
+$ echo 'Only stdin' | ./kit
+Only stdin
+
+$ echo 'Stdin to file' | ./kit -o output2.txt - && cat output2.txt
+Stdin to file
+
+$ ./kit binary_file | head -c 20; echo
+@CE;�X:8"�!|�vq�r
+
+$ ./kit input.txt | wc -c
+    8886
+
+$ ./kit empty.txt file1.txt
+
+This is file1
+
+Testing error handling...
+$ ./kit nonexistent_file.txt
+Error opening input file: No such file or directory
+
+$ ./kit file1.txt nonexistent_file.txt file2.txt
+This is file1
+Error opening input file: No such file or directory
+
+$ ./kit /root/secret.txt
+Error opening input file: No such file or directory
+
+$ ./kit -o /root/output.txt file1.txt
+Error opening output file: No such file or directory
+
+$ ./kit -o '' file1.txt
+Error opening output file: No such file or directory
+
+$ ./kit -o
+./kit: option requires an argument -- o
+Usage: ./kit [-o outfile] [infile1 [infile2 ...]]
+       ./kit [-o outfile]
+
+$ ./kit -x
+./kit: illegal option -- x
+Usage: ./kit [-o outfile] [infile1 [infile2 ...]]
+       ./kit [-o outfile]
+
+$ chmod 000 file1.txt && ./kit file1.txt; chmod 644 file1.txt
+Error opening input file: Permission denied
