@@ -1,0 +1,70 @@
+gcc -Wall -Werror -o kit kit.c
+Test: Basic file concatenation
+Command: ./kit file1.txt file2.txt
+This is file1
+This is file2
+Exit status: 0
+-------------------
+Test: Using standard input with files
+Command: echo 'Standard input' | ./kit file1.txt - file2.txt
+This is file1
+Standard input
+This is file2
+Exit status: 0
+-------------------
+Test: Multiple instances of standard input
+Command: (echo 'Input 1'; echo 'Input 2') | ./kit - - file1.txt
+Input 1
+Input 2
+This is file1
+Exit status: 0
+-------------------
+Test: Output to a file
+Command: ./kit -o output.txt file1.txt file2.txt && cat output.txt
+This is file1
+This is file2
+Exit status: 0
+-------------------
+Test: Reading only from standard input
+Command: echo 'Only stdin' | ./kit
+Only stdin
+Exit status: 0
+-------------------
+Test: Using output file with standard input
+Command: echo 'Stdin to file' | ./kit -o output2.txt - && cat output2.txt
+Stdin to file
+Exit status: 0
+-------------------
+Test: Binary file handling
+Command: ./kit binary_file | sha1sum
+./test_kit.sh: line 20: sha1sum: command not found
+Exit status: 127
+-------------------
+Test: Error handling for non-existent file
+Command: ./kit nonexistent_file.txt
+Error opening input file: No such file or directory
+Exit status: 255
+-------------------
+Test: Mixing existing and non-existing files
+Command: ./kit file1.txt nonexistent_file.txt file2.txt
+This is file1
+Error opening input file: No such file or directory
+Exit status: 255
+-------------------
+Test: Using a single hyphen as a filename
+Command: echo '- file' > ./- && ./kit ./-
+- file
+Exit status: 0
+-------------------
+Test: Large file handling
+Command: ./kit input.txt | wc -c
+    8886
+Exit status: 0
+-------------------
+Test: Empty file handling
+Command: ./kit empty.txt file1.txt
+
+This is file1
+Exit status: 0
+-------------------
+All test results have been saved to kit_test_results.txt
