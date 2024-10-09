@@ -1,0 +1,9 @@
+## Recursive filesystem statistics checker
+Write a program which recursively explores the filesystem starting from a given directory, which is the sole argument to the program. The order in which the filesystem tree is explored (e.g. depth-first) is not important. Tabulate the following statistics and report at the end:
+a) # of inodes of each type (e.g. directory, file, symlink, etc.) encountered
+b) sum the sizes of all the regular files encountered. Also sum the number of disk blocks allocated for them. The ratio gives you, in a sense, the spatial efficiency of the filesystem
+c) # of inodes which are hard-linked, i.e. which have a link count of more than 1. Do not include directory inodes, which always have a link count of at least 2.
+d) # of symlinks encountered that did not (at least at the time of the exploration) resolve to a valid target. Hint: there is a very easy way to determine if a symlink resolves or not, without having to duplicate the kernel’s logic in your own code
+e) # of pathnames encountered which would be "problematic" to enter at the keyboard. This means any name which contains non-printable characters, non-ASCII characters, or special characters that confuse the shell unless properly escaped.
+Error handling: you might encounter errors, especially if you try to explore a part of the filesystem where you don’t have permission. Do not terminate the entire program because of an error. Report the error and take reasonable action to continue, if possible.
+SUBMISSION: Your code, plus a screenshot (must be READABLE without a magnifying glass) or plain text session output, showing your code running.
