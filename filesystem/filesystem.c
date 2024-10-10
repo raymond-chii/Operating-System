@@ -1,45 +1,121 @@
+#include "filesystem.h"
 #include <stdio.h>
+#include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
-void explore_directory(const char *path);
+struct FileStats stats = {0};
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
-        return 1;
+void print_statistics() {
+    printf("Number of regular files: %d\n", stats.regular_files);
+    printf("Number of directories: %d\n", stats.directories);
+    printf("Number of symlinks: %d\n", stats.symlinks);
+    printf("Number of block devices: %d\n", stats.block_devices);
+    printf("Number of char devices: %d\n", stats.char_devices);
+    printf("Number of fifos: %d\n", stats.fifos);
+    printf("Number of sockets: %d\n", stats.sockets);
+    printf("Number of unknown: %d\n", stats.unknown);
+    printf("Total size: %lld\n", stats.total_size);
+    printf("Total blocks: %ld\n", stats.total_blocks);
+    if (stats.total_blocks > 0) {
+        double efficiency = (double)stats.total_size / (stats.total_blocks * 512);
+        printf("Spatial efficiency: %.2f\n", efficiency);
     }
+    printf("Hard linked: %d\n", stats.hard_linked);
+    printf("Unresolved symlinks: %d\n", stats.unresolved_symlinks);
+    printf("Problematic names: %d\n", stats.problematic_names);
+    printf("Errors: %d\n", stats.error_count);
+}
 
-    explore_directory(argv[1]);
+int is_problematic_name(const char *name) {
+    // Get the basename of the path
+    const char *basename = strrchr(name, '/');
+    basename = basename ? basename + 1 : name;
 
+    // Check each character in the basename
+    for (int i = 0; basename[i] != '\0'; i++) {
+        char c = basename[i];
+        if (!isprint(c) || c == ' ' || c == '\\' || c == '\'' || c == '"' ||
+            c == '`' || c == '<' || c == '>' || c == '|' || c == '*' ||
+            c == '?' || c == '&' || c == ';' || c == '(' || c == ')') {
+            return 1;
+        }
+    }
     return 0;
 }
 
+int is_symlink_resolvable(const char *path) {
+    char buf[1024];
+    ssize_t len = readlink(path, buf, sizeof(buf) - 1);
+    if (len != -1) {
+        buf[len] = '\0';
+        // Check if the target exists
+        if (access(buf, F_OK) != -1) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
 void file_stats(const char *path) {
-    
     struct stat st;
-    if (stat(path, &st) == -1){
-        fprintf(stderr,"Can not stat %s:%s\\n",path,strerror(errno));
+    if (lstat(path, &st) == -1) {
+        fprintf(stderr, "Cannot stat %s: %s\n", path, strerror(errno));
         return;
     }
 
-    printf("File: %s\n", path);
-    printf("Inode: %llu\n",(unsigned long long) st.st_ino);
+    switch (st.st_mode & S_IFMT) {
+        case S_IFREG:
+            stats.regular_files++;
+            stats.total_size += st.st_size;
+            stats.total_blocks += st.st_blocks;
+            if (st.st_nlink > 1) stats.hard_linked++;
+            break;
+        case S_IFDIR:
+            stats.directories++;
+            break;
+        case S_IFLNK:
+            stats.symlinks++;
+            if (!is_symlink_resolvable(path)) stats.unresolved_symlinks++;
+            break;
+        case S_IFBLK:
+            stats.block_devices++;
+            break;
+        case S_IFCHR:
+            stats.char_devices++;
+            break;
+        case S_IFIFO:
+            stats.fifos++;
+            break;
+        case S_IFSOCK:
+            stats.sockets++;
+            break;
+        default:
+            stats.unknown++;
+            break;
+    }
+    if (is_problematic_name(path)) stats.problematic_names++;
 
-    printf("Size: %lld\n",(long long) st.st_size);
-    printf("Blocks: %lld\n",(long long) st.st_blocks);
-
-    printf("IO block: %ld\n",(long) st.st_blksize);
-    
-    printf("Links: %lld\n",(long long) st.st_nlink);
-    printf("Mode: %lld\n",(long long) st.st_mode);
-    printf("\n");
-
+    printf("%s: %s\n", path, inode_type(st.st_mode));
 }
 
+char *inode_type(mode_t mode) {
+    switch (mode & S_IFMT) {
+        case S_IFREG: return "regular file";
+        case S_IFDIR: return "directory";
+        case S_IFLNK: return "symbolic link";
+        case S_IFBLK: return "block device";
+        case S_IFCHR: return "character device";
+        case S_IFIFO: return "FIFO/pipe";
+        case S_IFSOCK: return "socket";
+        default: return "unknown";
+    }
+}
 
 void explore_directory(const char *path) {
 
@@ -49,6 +125,7 @@ void explore_directory(const char *path) {
     if (dirp == NULL) {
         fprintf(stderr,"Can not open directory %s:%s\\n",path,strerror(errno));
         return;
+        stats.error_count++;
     }
 
     errno = 0; 
@@ -60,13 +137,44 @@ void explore_directory(const char *path) {
 
         char full_path[1024];
         snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-        
+
+        if (snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name) >= sizeof(full_path)) {
+            fprintf(stderr, "Path too long: %s/%s\n", path, entry->d_name);
+            stats.error_count++;
+            continue;
+        }
+        if (is_problematic_name(entry->d_name)) {
+            stats.problematic_names++;
+            printf("Problematic name found: %s\n", full_path);
+        }
+
         file_stats(full_path);
+
+        struct stat st;
+        if (lstat(full_path, &st) == 0 && S_ISDIR(st.st_mode)) {
+            explore_directory(full_path);
+        }
     }
 
     if (errno != 0) {
         fprintf(stderr,"Can not read directory %s:%s\\n",path,strerror(errno));
+        stats.error_count++;
     }
 
     closedir(dirp);
 }
+
+
+int main(int argc, char *argv[]) {
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
+        return 1;
+    }
+
+    explore_directory(argv[1]);
+    print_statistics();
+
+    return 0;
+}
+
