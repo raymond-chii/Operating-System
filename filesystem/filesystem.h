@@ -20,7 +20,6 @@ struct FileStats {
     int error_count;
 };
 
-// Function prototypes
 void explore_directory(const char *path);
 void file_stats(const char *path);
 char *inode_type(mode_t mode);
@@ -28,4 +27,4 @@ int is_problematic_name(const char *name);
 int is_symlink_resolvable(const char *path);
 void print_statistics();
 
-#endif // FILESYSTEM_H
+#endif

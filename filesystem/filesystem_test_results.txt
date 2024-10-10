@@ -1,0 +1,649 @@
+$ make
+gcc -Wall -Werror -o filesystem filesystem.c
+
+Testing directory: test_dirs/normal_dir
+$ ./filesystem "test_dirs/normal_dir"
+Regular file: test_dirs/normal_dir/file2.txt, Size: 14 bytes
+test_dirs/normal_dir/file2.txt: regular file
+Regular file: test_dirs/normal_dir/file1.txt, Size: 14 bytes
+test_dirs/normal_dir/file1.txt: regular file
+Regular file: test_dirs/normal_dir/empty_file, Size: 0 bytes
+test_dirs/normal_dir/empty_file: regular file
+Number of regular files: 3
+Number of directories: 0
+Number of symlinks: 0
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 28
+Total blocks: 16
+Spatial efficiency: 0.00
+Hard linked: 0
+Unresolved symlinks: 0
+Problematic names: 0
+Errors: 0
+
+---
+
+Testing directory: test_dirs/empty_dir
+$ ./filesystem "test_dirs/empty_dir"
+Number of regular files: 0
+Number of directories: 0
+Number of symlinks: 0
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 0
+Total blocks: 0
+Hard linked: 0
+Unresolved symlinks: 0
+Problematic names: 0
+Errors: 0
+
+---
+
+Testing directory: test_dirs/symlink_dir
+$ ./filesystem "test_dirs/symlink_dir"
+Cannot read directory test_dirs/symlink_dir: No such file or directory
+test_dirs/symlink_dir/working_symlink: symbolic link
+test_dirs/symlink_dir/broken_symlink: symbolic link
+Number of regular files: 0
+Number of directories: 0
+Number of symlinks: 2
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 0
+Total blocks: 0
+Hard linked: 0
+Unresolved symlinks: 1
+Problematic names: 0
+Errors: 1
+
+---
+
+Testing directory: test_dirs/hardlink_dir
+$ ./filesystem "test_dirs/hardlink_dir"
+Hard linked file: test_dirs/hardlink_dir/hardlink_file2, Links: 2
+Regular file: test_dirs/hardlink_dir/hardlink_file2, Size: 16 bytes
+test_dirs/hardlink_dir/hardlink_file2: regular file
+Hard linked file: test_dirs/hardlink_dir/hardlink_file, Links: 2
+Regular file: test_dirs/hardlink_dir/hardlink_file, Size: 16 bytes
+test_dirs/hardlink_dir/hardlink_file: regular file
+Number of regular files: 2
+Number of directories: 0
+Number of symlinks: 0
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 32
+Total blocks: 16
+Spatial efficiency: 0.00
+Hard linked: 2
+Unresolved symlinks: 0
+Problematic names: 0
+Errors: 0
+
+---
+
+Testing directory: test_dirs/problematic dir
+$ ./filesystem "test_dirs/problematic dir"
+Regular file: test_dirs/problematic dir/file_with_非ascii.txt, Size: 19 bytes
+Problematic name found: test_dirs/problematic dir/file_with_非ascii.txt
+test_dirs/problematic dir/file_with_非ascii.txt: regular file
+Regular file: test_dirs/problematic dir/file with spaces.txt, Size: 17 bytes
+Problematic name found: test_dirs/problematic dir/file with spaces.txt
+test_dirs/problematic dir/file with spaces.txt: regular file
+Number of regular files: 2
+Number of directories: 0
+Number of symlinks: 0
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 36
+Total blocks: 16
+Spatial efficiency: 0.00
+Hard linked: 0
+Unresolved symlinks: 0
+Problematic names: 2
+Errors: 0
+
+---
+
+Testing directory: /etc
+$ ./filesystem "/etc"
+/etc/periodic: directory
+/etc/periodic/daily: directory
+Regular file: /etc/periodic/daily/999.local, Size: 712 bytes
+/etc/periodic/daily/999.local: regular file
+/etc/periodic/monthly: directory
+Regular file: /etc/periodic/monthly/999.local, Size: 606 bytes
+/etc/periodic/monthly/999.local: regular file
+/etc/periodic/weekly: directory
+Regular file: /etc/periodic/weekly/999.local, Size: 620 bytes
+/etc/periodic/weekly/999.local: regular file
+Regular file: /etc/manpaths, Size: 36 bytes
+/etc/manpaths: regular file
+Regular file: /etc/rc.common, Size: 1560 bytes
+/etc/rc.common: regular file
+Regular file: /etc/auto_master, Size: 195 bytes
+/etc/auto_master: regular file
+Regular file: /etc/csh.login, Size: 121 bytes
+/etc/csh.login: regular file
+Regular file: /etc/syslog.conf, Size: 96 bytes
+/etc/syslog.conf: regular file
+Regular file: /etc/krb5.keytab, Size: 1946 bytes
+/etc/krb5.keytab: regular file
+/etc/sudoers.d: directory
+/etc/ssl: directory
+Regular file: /etc/ssl/cert.pem, Size: 333483 bytes
+/etc/ssl/cert.pem: regular file
+Regular file: /etc/ssl/x509v3.cnf, Size: 1006 bytes
+/etc/ssl/x509v3.cnf: regular file
+Regular file: /etc/ssl/openssl.cnf, Size: 745 bytes
+/etc/ssl/openssl.cnf: regular file
+/etc/ssl/certs: directory
+Regular file: /etc/csh.logout, Size: 39 bytes
+/etc/csh.logout: regular file
+Regular file: /etc/aliases.db, Size: 16384 bytes
+/etc/aliases.db: regular file
+Regular file: /etc/bashrc_Apple_Terminal, Size: 9309 bytes
+/etc/bashrc_Apple_Terminal: regular file
+/etc/racoon: directory
+Regular file: /etc/racoon/psk.txt, Size: 272 bytes
+/etc/racoon/psk.txt: regular file
+Regular file: /etc/racoon/racoon.conf, Size: 3587 bytes
+/etc/racoon/racoon.conf: regular file
+/etc/snmp: directory
+Regular file: /etc/snmp/snmpd.conf.default, Size: 16166 bytes
+/etc/snmp/snmpd.conf.default: regular file
+Regular file: /etc/snmp/snmpd.conf, Size: 16166 bytes
+/etc/snmp/snmpd.conf: regular file
+Regular file: /etc/zshrc_Apple_Terminal, Size: 9335 bytes
+/etc/zshrc_Apple_Terminal: regular file
+Regular file: /etc/gettytab, Size: 5678 bytes
+/etc/gettytab: regular file
+Regular file: /etc/kern_loader.conf, Size: 0 bytes
+/etc/kern_loader.conf: regular file
+/etc/paths.d: directory
+Regular file: /etc/paths.d/40-XQuartz, Size: 13 bytes
+/etc/paths.d/40-XQuartz: regular file
+Regular file: /etc/paths.d/100-rvictl, Size: 23 bytes
+/etc/paths.d/100-rvictl: regular file
+Regular file: /etc/paths.d/Wireshark, Size: 43 bytes
+/etc/paths.d/Wireshark: regular file
+Regular file: /etc/paths.d/10-cryptex, Size: 224 bytes
+/etc/paths.d/10-cryptex: regular file
+/etc/asl: directory
+Regular file: /etc/asl/com.apple.mkb.internal, Size: 409 bytes
+/etc/asl/com.apple.mkb.internal: regular file
+Regular file: /etc/asl/com.apple.cdscheduler, Size: 216 bytes
+/etc/asl/com.apple.cdscheduler: regular file
+Regular file: /etc/asl/com.apple.install, Size: 233 bytes
+/etc/asl/com.apple.install: regular file
+Regular file: /etc/asl/com.apple.authd, Size: 190 bytes
+/etc/asl/com.apple.authd: regular file
+Regular file: /etc/asl/com.apple.eventmonitor, Size: 153 bytes
+/etc/asl/com.apple.eventmonitor: regular file
+Regular file: /etc/asl/com.apple.coreduetd, Size: 339 bytes
+/etc/asl/com.apple.coreduetd: regular file
+Regular file: /etc/asl/com.apple.mail, Size: 178 bytes
+/etc/asl/com.apple.mail: regular file
+Regular file: /etc/asl/com.apple.login.guest, Size: 318 bytes
+/etc/asl/com.apple.login.guest: regular file
+Regular file: /etc/asl/com.apple.performance, Size: 149 bytes
+/etc/asl/com.apple.performance: regular file
+Regular file: /etc/asl/com.apple.iokit.power, Size: 105 bytes
+/etc/asl/com.apple.iokit.power: regular file
+Regular file: /etc/asl/com.apple.contacts.ContactsAutocomplete, Size: 1378 bytes
+/etc/asl/com.apple.contacts.ContactsAutocomplete: regular file
+Regular file: /etc/asl/com.apple.mkb, Size: 350 bytes
+/etc/asl/com.apple.mkb: regular file
+Regular file: /etc/asl/com.apple.MessageTracer, Size: 156 bytes
+/etc/asl/com.apple.MessageTracer: regular file
+Regular file: /etc/asl/com.apple.networking.boringssl, Size: 376 bytes
+/etc/asl/com.apple.networking.boringssl: regular file
+Regular file: /etc/rtadvd.conf, Size: 891 bytes
+/etc/rtadvd.conf: regular file
+/etc/security: directory
+Regular file: /etc/security/audit_control.example, Size: 713 bytes
+/etc/security/audit_control.example: regular file
+Regular file: /etc/security/audit_event, Size: 26649 bytes
+/etc/security/audit_event: regular file
+Regular file: /etc/security/audit_class, Size: 652 bytes
+/etc/security/audit_class: regular file
+Regular file: /etc/security/audit_user, Size: 77 bytes
+/etc/security/audit_user: regular file
+Regular file: /etc/security/audit_warn, Size: 1326 bytes
+/etc/security/audit_warn: regular file
+Regular file: /etc/group, Size: 3567 bytes
+/etc/group: regular file
+Regular file: /etc/auto_home, Size: 149 bytes
+/etc/auto_home: regular file
+/etc/manpaths.d: directory
+Regular file: /etc/manpaths.d/40-XQuartz, Size: 19 bytes
+/etc/manpaths.d/40-XQuartz: regular file
+Regular file: /etc/manpaths.d/Wireshark, Size: 57 bytes
+/etc/manpaths.d/Wireshark: regular file
+/etc/ppp: directory
+Regular file: /etc/shells, Size: 189 bytes
+/etc/shells: regular file
+Regular file: /etc/ttys, Size: 1316 bytes
+/etc/ttys: regular file
+Regular file: /etc/paths, Size: 75 bytes
+/etc/paths: regular file
+Regular file: /etc/rmtab, Size: 0 bytes
+/etc/rmtab: regular file
+Regular file: /etc/xtab, Size: 0 bytes
+/etc/xtab: regular file
+/etc/localtime: symbolic link
+Regular file: /etc/pf.conf, Size: 1027 bytes
+/etc/pf.conf: regular file
+Regular file: /etc/sudoers, Size: 1563 bytes
+/etc/sudoers: regular file
+Regular file: /etc/bashrc, Size: 265 bytes
+/etc/bashrc: regular file
+/etc/newsyslog.d: directory
+Regular file: /etc/newsyslog.d/wifi.conf, Size: 154 bytes
+/etc/newsyslog.d/wifi.conf: regular file
+Regular file: /etc/newsyslog.d/com.apple.slapconfig.conf, Size: 175 bytes
+/etc/newsyslog.d/com.apple.slapconfig.conf: regular file
+Regular file: /etc/newsyslog.d/com.apple.slapd.conf, Size: 165 bytes
+/etc/newsyslog.d/com.apple.slapd.conf: regular file
+Regular file: /etc/newsyslog.d/com.apple.xscertd.conf, Size: 176 bytes
+/etc/newsyslog.d/com.apple.xscertd.conf: regular file
+Regular file: /etc/newsyslog.d/files.conf, Size: 154 bytes
+/etc/newsyslog.d/files.conf: regular file
+Regular file: /etc/irbrc, Size: 1299 bytes
+/etc/irbrc: regular file
+/etc/pam.d: directory
+Regular file: /etc/pam.d/screensaver_new_la, Size: 166 bytes
+/etc/pam.d/screensaver_new_la: regular file
+Regular file: /etc/pam.d/chkpasswd, Size: 200 bytes
+/etc/pam.d/chkpasswd: regular file
+Regular file: /etc/pam.d/authorization_lacont, Size: 183 bytes
+/etc/pam.d/authorization_lacont: regular file
+Regular file: /etc/pam.d/sshd, Size: 527 bytes
+/etc/pam.d/sshd: regular file
+Regular file: /etc/pam.d/login.term, Size: 152 bytes
+/etc/pam.d/login.term: regular file
+Regular file: /etc/pam.d/screensaver, Size: 408 bytes
+/etc/pam.d/screensaver: regular file
+Regular file: /etc/pam.d/other, Size: 191 bytes
+/etc/pam.d/other: regular file
+Regular file: /etc/pam.d/checkpw, Size: 181 bytes
+/etc/pam.d/checkpw: regular file
+Regular file: /etc/pam.d/screensaver_new_ctk, Size: 127 bytes
+/etc/pam.d/screensaver_new_ctk: regular file
+Regular file: /etc/pam.d/screensaver_new, Size: 279 bytes
+/etc/pam.d/screensaver_new: regular file
+Regular file: /etc/pam.d/su, Size: 356 bytes
+/etc/pam.d/su: regular file
+Regular file: /etc/pam.d/authorization_ctk, Size: 127 bytes
+/etc/pam.d/authorization_ctk: regular file
+Regular file: /etc/pam.d/screensaver_aks, Size: 312 bytes
+/etc/pam.d/screensaver_aks: regular file
+Regular file: /etc/pam.d/authorization_aks, Size: 113 bytes
+/etc/pam.d/authorization_aks: regular file
+Regular file: /etc/pam.d/sudo, Size: 283 bytes
+/etc/pam.d/sudo: regular file
+Regular file: /etc/pam.d/screensaver_la, Size: 365 bytes
+/etc/pam.d/screensaver_la: regular file
+Regular file: /etc/pam.d/authorization, Size: 279 bytes
+/etc/pam.d/authorization: regular file
+Regular file: /etc/pam.d/screensaver_new_aks, Size: 113 bytes
+/etc/pam.d/screensaver_new_aks: regular file
+Regular file: /etc/pam.d/authorization_la, Size: 166 bytes
+/etc/pam.d/authorization_la: regular file
+Regular file: /etc/pam.d/login, Size: 512 bytes
+/etc/pam.d/login: regular file
+Regular file: /etc/pam.d/cups, Size: 203 bytes
+/etc/pam.d/cups: regular file
+Regular file: /etc/pam.d/smbd, Size: 140 bytes
+/etc/pam.d/smbd: regular file
+Regular file: /etc/pam.d/passwd, Size: 197 bytes
+/etc/pam.d/passwd: regular file
+Regular file: /etc/pam.d/sudo_local.template, Size: 179 bytes
+/etc/pam.d/sudo_local.template: regular file
+Regular file: /etc/pam.d/screensaver_ctk, Size: 318 bytes
+/etc/pam.d/screensaver_ctk: regular file
+Regular file: /etc/zshrc, Size: 3094 bytes
+/etc/zshrc: regular file
+/etc/defaults: directory
+Regular file: /etc/defaults/periodic.conf, Size: 3402 bytes
+/etc/defaults/periodic.conf: regular file
+Regular file: /etc/hosts.equiv, Size: 0 bytes
+/etc/hosts.equiv: regular file
+Regular file: /etc/networks, Size: 53 bytes
+/etc/networks: regular file
+Regular file: /etc/find.codes, Size: 0 bytes
+/etc/find.codes: regular file
+/etc/apache2: directory
+Regular file: /etc/apache2/httpd.conf, Size: 21648 bytes
+/etc/apache2/httpd.conf: regular file
+Regular file: /etc/apache2/magic, Size: 13064 bytes
+/etc/apache2/magic: regular file
+/etc/apache2/original: directory
+Regular file: /etc/apache2/original/httpd.conf, Size: 21648 bytes
+/etc/apache2/original/httpd.conf: regular file
+/etc/apache2/original/extra: directory
+Regular file: /etc/apache2/original/extra/httpd-languages.conf, Size: 5078 bytes
+/etc/apache2/original/extra/httpd-languages.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-dav.conf, Size: 1747 bytes
+/etc/apache2/original/extra/httpd-dav.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-autoindex.conf, Size: 2877 bytes
+/etc/apache2/original/extra/httpd-autoindex.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-manual.conf, Size: 1419 bytes
+/etc/apache2/original/extra/httpd-manual.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-multilang-errordoc.conf, Size: 2216 bytes
+/etc/apache2/original/extra/httpd-multilang-errordoc.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-vhosts.conf, Size: 1519 bytes
+/etc/apache2/original/extra/httpd-vhosts.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-userdir.conf, Size: 607 bytes
+/etc/apache2/original/extra/httpd-userdir.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-info.conf, Size: 1119 bytes
+/etc/apache2/original/extra/httpd-info.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-ssl.conf, Size: 13325 bytes
+/etc/apache2/original/extra/httpd-ssl.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-default.conf, Size: 2942 bytes
+/etc/apache2/original/extra/httpd-default.conf: regular file
+Regular file: /etc/apache2/original/extra/proxy-html.conf, Size: 3161 bytes
+/etc/apache2/original/extra/proxy-html.conf: regular file
+Regular file: /etc/apache2/original/extra/httpd-mpm.conf, Size: 4456 bytes
+/etc/apache2/original/extra/httpd-mpm.conf: regular file
+/etc/apache2/other: directory
+Regular file: /etc/apache2/other/php7.conf, Size: 194 bytes
+/etc/apache2/other/php7.conf: regular file
+Regular file: /etc/apache2/other/mpm.conf, Size: 205 bytes
+/etc/apache2/other/mpm.conf: regular file
+Regular file: /etc/apache2/mime.types, Size: 61190 bytes
+/etc/apache2/mime.types: regular file
+/etc/apache2/extra: directory
+Regular file: /etc/apache2/extra/httpd-languages.conf, Size: 5078 bytes
+/etc/apache2/extra/httpd-languages.conf: regular file
+Regular file: /etc/apache2/extra/httpd-dav.conf, Size: 1747 bytes
+/etc/apache2/extra/httpd-dav.conf: regular file
+Regular file: /etc/apache2/extra/httpd-autoindex.conf, Size: 2877 bytes
+/etc/apache2/extra/httpd-autoindex.conf: regular file
+Regular file: /etc/apache2/extra/httpd-manual.conf, Size: 1419 bytes
+/etc/apache2/extra/httpd-manual.conf: regular file
+Regular file: /etc/apache2/extra/httpd-multilang-errordoc.conf, Size: 2216 bytes
+/etc/apache2/extra/httpd-multilang-errordoc.conf: regular file
+Regular file: /etc/apache2/extra/httpd-vhosts.conf, Size: 1519 bytes
+/etc/apache2/extra/httpd-vhosts.conf: regular file
+Regular file: /etc/apache2/extra/httpd-userdir.conf, Size: 607 bytes
+/etc/apache2/extra/httpd-userdir.conf: regular file
+Regular file: /etc/apache2/extra/httpd-info.conf, Size: 1119 bytes
+/etc/apache2/extra/httpd-info.conf: regular file
+Regular file: /etc/apache2/extra/httpd-ssl.conf, Size: 13325 bytes
+/etc/apache2/extra/httpd-ssl.conf: regular file
+Regular file: /etc/apache2/extra/httpd-default.conf, Size: 2942 bytes
+/etc/apache2/extra/httpd-default.conf: regular file
+Regular file: /etc/apache2/extra/proxy-html.conf, Size: 3161 bytes
+/etc/apache2/extra/proxy-html.conf: regular file
+Regular file: /etc/apache2/extra/httpd-mpm.conf, Size: 4456 bytes
+/etc/apache2/extra/httpd-mpm.conf: regular file
+/etc/apache2/users: directory
+Regular file: /etc/autofs.conf, Size: 1935 bytes
+/etc/autofs.conf: regular file
+/etc/ssh: directory
+Regular file: /etc/ssh/sshd_config, Size: 3517 bytes
+/etc/ssh/sshd_config: regular file
+Regular file: /etc/ssh/ssh_config, Size: 1958 bytes
+/etc/ssh/ssh_config: regular file
+/etc/ssh/ssh_config.d: directory
+Regular file: /etc/ssh/moduli, Size: 620105 bytes
+/etc/ssh/moduli: regular file
+/etc/ssh/sshd_config.d: directory
+Regular file: /etc/ssh/sshd_config.d/100-macos.conf, Size: 133 bytes
+/etc/ssh/sshd_config.d/100-macos.conf: regular file
+Regular file: /etc/ftpusers, Size: 119 bytes
+/etc/ftpusers: regular file
+Regular file: /etc/profile, Size: 189 bytes
+/etc/profile: regular file
+Regular file: /etc/csh.cshrc, Size: 189 bytes
+/etc/csh.cshrc: regular file
+Regular file: /etc/ntp_opendirectory.conf, Size: 23 bytes
+/etc/ntp_opendirectory.conf: regular file
+Regular file: /etc/locate.rc, Size: 832 bytes
+/etc/locate.rc: regular file
+/etc/resolv.conf: symbolic link
+Regular file: /etc/nfs.conf, Size: 43 bytes
+/etc/nfs.conf: regular file
+Regular file: /etc/sudo_lecture, Size: 257 bytes
+/etc/sudo_lecture: regular file
+Regular file: /etc/asl.conf, Size: 1051 bytes
+/etc/asl.conf: regular file
+Regular file: /etc/rc.netboot, Size: 5264 bytes
+/etc/rc.netboot: regular file
+Regular file: /etc/hosts, Size: 331 bytes
+/etc/hosts: regular file
+/etc/postfix: directory
+Regular file: /etc/postfix/makedefs.out, Size: 6172 bytes
+/etc/postfix/makedefs.out: regular file
+Regular file: /etc/postfix/transport, Size: 12666 bytes
+/etc/postfix/transport: regular file
+Regular file: /etc/postfix/main.cf.proto, Size: 26862 bytes
+/etc/postfix/main.cf.proto: regular file
+Regular file: /etc/postfix/LICENSE, Size: 11942 bytes
+/etc/postfix/LICENSE: regular file
+Regular file: /etc/postfix/access, Size: 21535 bytes
+/etc/postfix/access: regular file
+/etc/postfix/postfix-files.d: directory
+Regular file: /etc/postfix/canonical, Size: 12000 bytes
+/etc/postfix/canonical: regular file
+Regular file: /etc/postfix/main.cf.default, Size: 27340 bytes
+/etc/postfix/main.cf.default: regular file
+Regular file: /etc/postfix/master.cf.default, Size: 7443 bytes
+/etc/postfix/master.cf.default: regular file
+Regular file: /etc/postfix/relocated, Size: 6929 bytes
+/etc/postfix/relocated: regular file
+Regular file: /etc/postfix/custom_header_checks, Size: 44 bytes
+/etc/postfix/custom_header_checks: regular file
+Regular file: /etc/postfix/main.cf, Size: 27340 bytes
+/etc/postfix/main.cf: regular file
+Regular file: /etc/postfix/virtual, Size: 12823 bytes
+/etc/postfix/virtual: regular file
+Regular file: /etc/postfix/header_checks, Size: 23802 bytes
+/etc/postfix/header_checks: regular file
+Regular file: /etc/postfix/bounce.cf.default, Size: 3547 bytes
+/etc/postfix/bounce.cf.default: regular file
+Regular file: /etc/postfix/master.cf.proto, Size: 6230 bytes
+/etc/postfix/master.cf.proto: regular file
+Regular file: /etc/postfix/TLS_LICENSE, Size: 1629 bytes
+/etc/postfix/TLS_LICENSE: regular file
+Regular file: /etc/postfix/generic, Size: 10221 bytes
+/etc/postfix/generic: regular file
+Regular file: /etc/postfix/master.cf, Size: 7443 bytes
+/etc/postfix/master.cf: regular file
+Regular file: /etc/postfix/aliases, Size: 10086 bytes
+/etc/postfix/aliases: regular file
+Regular file: /etc/postfix/postfix-files, Size: 20330 bytes
+/etc/postfix/postfix-files: regular file
+Regular file: /etc/pf.os, Size: 28311 bytes
+/etc/pf.os: regular file
+/etc/pf.anchors: directory
+Regular file: /etc/pf.anchors/com.apple, Size: 329 bytes
+/etc/pf.anchors/com.apple: regular file
+Regular file: /etc/ntp.conf, Size: 22 bytes
+/etc/ntp.conf: regular file
+Regular file: /etc/rpc, Size: 1735 bytes
+/etc/rpc: regular file
+Regular file: /etc/master.passwd, Size: 9152 bytes
+/etc/master.passwd: regular file
+/etc/openldap: directory
+Regular file: /etc/openldap/AppleOpenLDAP.plist, Size: 116915 bytes
+/etc/openldap/AppleOpenLDAP.plist: regular file
+Regular file: /etc/openldap/slapd.conf.default, Size: 2151 bytes
+/etc/openldap/slapd.conf.default: regular file
+Regular file: /etc/openldap/ldap.conf, Size: 265 bytes
+/etc/openldap/ldap.conf: regular file
+Regular file: /etc/openldap/ldap.conf.default, Size: 265 bytes
+/etc/openldap/ldap.conf.default: regular file
+/etc/openldap/schema: directory
+Regular file: /etc/openldap/schema/corba.schema, Size: 8063 bytes
+/etc/openldap/schema/corba.schema: regular file
+Regular file: /etc/openldap/schema/dyngroup.schema, Size: 3289 bytes
+/etc/openldap/schema/dyngroup.schema: regular file
+Regular file: /etc/openldap/schema/collective.ldif, Size: 2036 bytes
+/etc/openldap/schema/collective.ldif: regular file
+Regular file: /etc/openldap/schema/samba.schema, Size: 5689 bytes
+/etc/openldap/schema/samba.schema: regular file
+Regular file: /etc/openldap/schema/inetorgperson.schema, Size: 6267 bytes
+/etc/openldap/schema/inetorgperson.schema: regular file
+Regular file: /etc/openldap/schema/openldap.ldif, Size: 3308 bytes
+/etc/openldap/schema/openldap.ldif: regular file
+Regular file: /etc/openldap/schema/corba.ldif, Size: 1845 bytes
+/etc/openldap/schema/corba.ldif: regular file
+Regular file: /etc/openldap/schema/core.ldif, Size: 20612 bytes
+/etc/openldap/schema/core.ldif: regular file
+Regular file: /etc/openldap/schema/duaconf.schema, Size: 10388 bytes
+/etc/openldap/schema/duaconf.schema: regular file
+Regular file: /etc/openldap/schema/krb5-kdc.schema, Size: 4059 bytes
+/etc/openldap/schema/krb5-kdc.schema: regular file
+Regular file: /etc/openldap/schema/pmi.ldif, Size: 6904 bytes
+/etc/openldap/schema/pmi.ldif: regular file
+Regular file: /etc/openldap/schema/apple_auxillary.schema, Size: 717 bytes
+/etc/openldap/schema/apple_auxillary.schema: regular file
+Regular file: /etc/openldap/schema/microsoft.schema, Size: 122955 bytes
+/etc/openldap/schema/microsoft.schema: regular file
+Regular file: /etc/openldap/schema/ppolicy.schema, Size: 19603 bytes
+/etc/openldap/schema/ppolicy.schema: regular file
+Regular file: /etc/openldap/schema/pmi.schema, Size: 20467 bytes
+/etc/openldap/schema/pmi.schema: regular file
+Regular file: /etc/openldap/schema/apple.schema, Size: 48470 bytes
+/etc/openldap/schema/apple.schema: regular file
+Regular file: /etc/openldap/schema/core.schema, Size: 20501 bytes
+/etc/openldap/schema/core.schema: regular file
+Regular file: /etc/openldap/schema/openldap.schema, Size: 1514 bytes
+/etc/openldap/schema/openldap.schema: regular file
+Regular file: /etc/openldap/schema/inetorgperson.ldif, Size: 3481 bytes
+/etc/openldap/schema/inetorgperson.ldif: regular file
+Regular file: /etc/openldap/schema/netinfo.schema, Size: 8455 bytes
+/etc/openldap/schema/netinfo.schema: regular file
+Regular file: /etc/openldap/schema/README, Size: 3512 bytes
+/etc/openldap/schema/README: regular file
+Regular file: /etc/openldap/schema/fmserver.schema, Size: 2059 bytes
+/etc/openldap/schema/fmserver.schema: regular file
+Regular file: /etc/openldap/schema/collective.schema, Size: 6190 bytes
+/etc/openldap/schema/collective.schema: regular file
+Regular file: /etc/openldap/schema/ppolicy.ldif, Size: 4032 bytes
+/etc/openldap/schema/ppolicy.ldif: regular file
+Regular file: /etc/openldap/schema/java.ldif, Size: 2979 bytes
+/etc/openldap/schema/java.ldif: regular file
+Regular file: /etc/openldap/schema/nis.schema, Size: 7834 bytes
+/etc/openldap/schema/nis.schema: regular file
+Regular file: /etc/openldap/schema/misc.schema, Size: 2387 bytes
+/etc/openldap/schema/misc.schema: regular file
+Regular file: /etc/openldap/schema/java.schema, Size: 13901 bytes
+/etc/openldap/schema/java.schema: regular file
+Regular file: /etc/oCannot open directory /etc/cups/certs: Permission denied
+Cannot read directory /etc/cups: Permission denied
+penldap/schema/nis.ldif, Size: 6809 bytes
+/etc/openldap/schema/nis.ldif: regular file
+Regular file: /etc/openldap/schema/duaconf.ldif, Size: 4842 bytes
+/etc/openldap/schema/duaconf.ldif: regular file
+Regular file: /etc/openldap/schema/cosine.ldif, Size: 12006 bytes
+/etc/openldap/schema/cosine.ldif: regular file
+Regular file: /etc/openldap/schema/dyngroup.ldif, Size: 3330 bytes
+/etc/openldap/schema/dyngroup.ldif: regular file
+Regular file: /etc/openldap/schema/microsoft.ext.schema, Size: 177122 bytes
+/etc/openldap/schema/microsoft.ext.schema: regular file
+Regular file: /etc/openldap/schema/cosine.schema, Size: 73994 bytes
+/etc/openldap/schema/cosine.schema: regular file
+Regular file: /etc/openldap/schema/microsoft.std.schema, Size: 13124 bytes
+/etc/openldap/schema/microsoft.std.schema: regular file
+Regular file: /etc/openldap/schema/misc.ldif, Size: 2082 bytes
+/etc/openldap/schema/misc.ldif: regular file
+Regular file: /etc/openldap/DB_CONFIG.example, Size: 845 bytes
+/etc/openldap/DB_CONFIG.example: regular file
+/etc/aliases: symbolic link
+Regular file: /etc/com.apple.screensharing.agent.launchd, Size: 82 bytes
+/etc/com.apple.screensharing.agent.launchd: regular file
+/etc/wfs: directory
+Regular file: /etc/wfs/httpd_webdavsharing_proxy.conf.inactive, Size: 624 bytes
+/etc/wfs/httpd_webdavsharing_proxy.conf.inactive: regular file
+Regular file: /etc/wfs/httpd_webdavsharing.conf, Size: 3335 bytes
+/etc/wfs/httpd_webdavsharing.conf: regular file
+Regular file: /etc/wfs/wfs.plist, Size: 943 bytes
+/etc/wfs/wfs.plist: regular file
+Regular file: /etc/wfs/httpd_webdavsharing_template.conf, Size: 3428 bytes
+/etc/wfs/httpd_webdavsharing_template.conf: regular file
+Regular file: /etc/protocols, Size: 6393 bytes
+/etc/protocols: regular file
+/etc/cups: directory
+Regular file: /etc/cups/cupsd.conf, Size: 6682 bytes
+/etc/cups/cupsd.conf: regular file
+Regular file: /etc/cups/snmp.conf.default, Size: 128 bytes
+/etc/cups/snmp.conf.default: regular file
+Regular file: /etc/cups/cups-files.conf.default, Size: 3147 bytes
+/etc/cups/cups-files.conf.default: regular file
+/etc/cups/ppd: directory
+Regular file: /etc/cups/cupsd.conf.default, Size: 6612 bytes
+/etc/cups/cupsd.conf.default: regular file
+Regular file: /etc/cups/printers.conf.pre-update, Size: 25 bytes
+/etc/cups/printers.conf.pre-update: regular file
+Regular file: /etc/cups/cups-files.conf, Size: 3147 bytes
+/etc/cups/cups-files.conf: regular file
+/etc/cups/certs: directory
+Regular file: /etc/cups/cupsd.conf.pre-update, Size: 6634 bytes
+/etc/cups/cupsd.conf.pre-update: regular file
+Regular file: /etc/cups/snmp.conf, Size: 128 bytes
+/etc/cups/snmp.conf: regular file
+Regular file: /etc/cups/printers.conf, Size: 25 bytes
+/etc/cups/printers.conf: regular file
+Regular file: /etc/man.conf, Size: 2451 bytes
+/etc/man.conf: regular file
+Regular file: /etc/services, Size: 677977 bytes
+/etc/services: regular file
+/etc/uucp: directory
+Regular file: /etc/uucp/sys, Size: 2422 bytes
+/etc/uucp/sys: regular file
+Regular file: /etc/uucp/port, Size: 141 bytes
+/etc/uucp/port: regular file
+Regular file: /etc/uucp/passwd, Size: 133 bytes
+/etc/uucp/passwd: regular file
+Regular file: /etc/passwd, Size: 8542 bytes
+/etc/passwd: regular file
+Regular file: /etc/zprofile, Size: 255 bytes
+/etc/zprofile: regular file
+Regular file: /etc/afpovertcp.cfg, Size: 515 bytes
+/etc/afpovertcp.cfg: regular file
+Regular file: /etc/newsyslog.conf, Size: 1318 bytes
+/etc/newsyslog.conf: regular file
+Regular file: /etc/mail.rc, Size: 106 bytes
+/etc/mail.rc: regular file
+Regular file: /etc/notify.conf, Size: 557 bytes
+/etc/notify.conf: regular file
+Number of regular files: 231
+Number of directories: 36
+Number of symlinks: 3
+Number of block devices: 0
+Number of char devices: 0
+Number of fifos: 0
+Number of sockets: 0
+Number of unknown: 0
+Total size: 3117976
+Total blocks: 3176
+Spatial efficiency: 1.92
+Hard linked: 0
+Unresolved symlinks: 0
+Problematic names: 0
+Errors: 2
+
+---
+
+$ rm -rf test_dirs
+$ make clean
+rm -f filesystem
+All test results have been saved to filesystem_test_results.txt

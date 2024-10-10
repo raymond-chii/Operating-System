@@ -45,23 +45,36 @@ int is_problematic_name(const char *name) {
 }
 
 int is_symlink_resolvable(const char *path) {
-    char buf[1024];
-    ssize_t len = readlink(path, buf, sizeof(buf) - 1);
-    if (len != -1) {
-        buf[len] = '\0';
-        // Check if the target exists
-        struct stat st;
-        if (stat(buf, &st) == 0) {
-            return 1;
-        }
+    struct stat st;
+    
+    // Use lstat to get information about the symlink itself
+    if (lstat(path, &st) != 0) {
+        return 0;
     }
-    return 0;
+    
+    // Verify that it's actually a symlink
+    if (!S_ISLNK(st.st_mode)) {
+        return 1;
+    }
+    
+    // Now try to stat the target of the symlink
+    if (stat(path, &st) == 0) {
+        return 1; 
+    } else {
+        return 0;
+    }
 }
 
 void file_stats(const char *path) {
     struct stat st;
     if (lstat(path, &st) == -1) {
-        fprintf(stderr, "Cannot stat %s: %s\n", path, strerror(errno));
+        if (errno == EACCES) {
+            fprintf(stderr, "Permission denied: Cannot access %s\n", path);
+        } else if (errno == ENOENT) {
+            fprintf(stderr, "No such file or directory: %s\n", path);
+        } else {
+            fprintf(stderr, "Error accessing %s: %s\n", path, strerror(errno));
+        }
         stats.error_count++;
         return;
     }
@@ -71,7 +84,11 @@ void file_stats(const char *path) {
             stats.regular_files++;
             stats.total_size += st.st_size;
             stats.total_blocks += st.st_blocks;
-            if (st.st_nlink > 1) stats.hard_linked++;
+            if (st.st_nlink > 1){
+                stats.hard_linked++;
+                printf("Hard linked file: %s, Links: %lu\n", path, (unsigned long)st.st_nlink);
+            }
+            printf("Regular file: %s, Size: %lld bytes\n", path, (long long)st.st_size);
             break;
         case S_IFDIR:
             stats.directories++;
@@ -131,7 +148,7 @@ void explore_directory(const char *path) {
     }
 
     // Count the directory itself
-    file_stats(path);
+    // file_stats(path);
 
     errno = 0; 
 
