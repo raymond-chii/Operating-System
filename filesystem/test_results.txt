@@ -2,12 +2,13 @@ Filesystem Statistics Checker Comprehensive Test Results
 =======================================================
 
 Testing: Normal directory
+test_dirs/normal_dir: directory
 test_dirs/normal_dir/file2.txt: regular file
 test_dirs/normal_dir/test_fifo: FIFO/pipe
 test_dirs/normal_dir/file_1MB: regular file
 test_dirs/normal_dir/empty_file: regular file
 Number of regular files: 3
-Number of directories: 0
+Number of directories: 1
 Number of symlinks: 0
 Number of block devices: 0
 Number of char devices: 0
@@ -22,7 +23,7 @@ Unresolved symlinks: 0
 Problematic names: 0
 Errors: 0
 PASS: Number of regular files: 3
-FAIL: Expected Number of directories: 1
+PASS: Number of directories: 1
 PASS: Number of symlinks: 0
 PASS: Number of fifos: 1
 FAIL: Expected Total size: 1048581
@@ -32,8 +33,9 @@ PASS: Problematic names: 0
 ---
 
 Testing: Empty directory
+test_dirs/empty_dir: directory
 Number of regular files: 0
-Number of directories: 0
+Number of directories: 1
 Number of symlinks: 0
 Number of block devices: 0
 Number of char devices: 0
@@ -47,16 +49,18 @@ Unresolved symlinks: 0
 Problematic names: 0
 Errors: 0
 PASS: Number of regular files: 0
-FAIL: Expected Number of directories: 1
+PASS: Number of directories: 1
 PASS: Total size: 0
 
 ---
 
 Testing: Directory with symlinks
-Can not read directory test_dirs/symlink_dir:No such file or directory\ntest_dirs/symlink_dir/working_symlink: symbolic link
+Cannot read directory test_dirs/symlink_dir: No such file or directory
+test_dirs/symlink_dir: directory
+test_dirs/symlink_dir/working_symlink: symbolic link
 test_dirs/symlink_dir/broken_symlink: symbolic link
 Number of regular files: 0
-Number of directories: 0
+Number of directories: 1
 Number of symlinks: 2
 Number of block devices: 0
 Number of char devices: 0
@@ -75,9 +79,10 @@ FAIL: Expected Unresolved symlinks: 1
 ---
 
 Testing: Directory with hard links
+test_dirs/hardlink_dir: directory
 test_dirs/hardlink_dir/hardlink_file: regular file
 Number of regular files: 1
-Number of directories: 0
+Number of directories: 1
 Number of symlinks: 0
 Number of block devices: 0
 Number of char devices: 0
@@ -97,12 +102,14 @@ PASS: Hard linked: 1
 ---
 
 Testing: Directory with problematic names
+Problematic name found: test_dirs/problematic dir
+test_dirs/problematic dir: directory
 Problematic name found: test_dirs/problematic dir/file_with_非ascii.txt
 test_dirs/problematic dir/file_with_非ascii.txt: regular file
 Problematic name found: test_dirs/problematic dir/file with spaces.txt
 test_dirs/problematic dir/file with spaces.txt: regular file
 Number of regular files: 2
-Number of directories: 0
+Number of directories: 1
 Number of symlinks: 0
 Number of block devices: 0
 Number of char devices: 0
@@ -113,15 +120,16 @@ Total size: 0
 Total blocks: 0
 Hard linked: 0
 Unresolved symlinks: 0
-Problematic names: 4
+Problematic names: 3
 Errors: 0
 PASS: Number of regular files: 2
-FAIL: Expected Problematic names: 3
+PASS: Problematic names: 3
 
 ---
 
 Testing: Inaccessible directory
-Can not open directory /root:No such file or directory\nNumber of regular files: 0
+Cannot open directory /root: No such file or directory
+Number of regular files: 0
 Number of directories: 0
 Number of symlinks: 0
 Number of block devices: 0
@@ -134,8 +142,8 @@ Total blocks: 0
 Hard linked: 0
 Unresolved symlinks: 0
 Problematic names: 0
-Errors: 0
-FAIL: Expected Errors: 1
+Errors: 1
+PASS: Errors: 1
 
 ---
 

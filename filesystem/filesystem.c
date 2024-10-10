@@ -32,18 +32,14 @@ void print_statistics() {
 }
 
 int is_problematic_name(const char *name) {
-    // Get the basename of the path
-    const char *basename = strrchr(name, '/');
-    basename = basename ? basename + 1 : name;
-
-    // Check each character in the basename
-    for (int i = 0; basename[i] != '\0'; i++) {
-        char c = basename[i];
-        if (!isprint(c) || c == ' ' || c == '\\' || c == '\'' || c == '"' ||
-            c == '`' || c == '<' || c == '>' || c == '|' || c == '*' ||
-            c == '?' || c == '&' || c == ';' || c == '(' || c == ')') {
+    for (int i = 0; name[i] != '\0'; i++) {
+        if (!isprint(name[i]) || !isascii(name[i]) || isspace(name[i]) ||
+            name[i] == '\\' || name[i] == '/' || name[i] == ':' ||
+            name[i] == '*' || name[i] == '?' || name[i] == '"' || 
+            name[i] == '<' || name[i] == '>' || name[i] == '|' ||
+            name[i] == '&'){
             return 1;
-        }
+        }    
     }
     return 0;
 }
@@ -54,18 +50,19 @@ int is_symlink_resolvable(const char *path) {
     if (len != -1) {
         buf[len] = '\0';
         // Check if the target exists
-        if (access(buf, F_OK) != -1) {
+        struct stat st;
+        if (stat(buf, &st) == 0) {
             return 1;
         }
     }
     return 0;
 }
 
-
 void file_stats(const char *path) {
     struct stat st;
     if (lstat(path, &st) == -1) {
         fprintf(stderr, "Cannot stat %s: %s\n", path, strerror(errno));
+        stats.error_count++;
         return;
     }
 
@@ -99,7 +96,13 @@ void file_stats(const char *path) {
             stats.unknown++;
             break;
     }
-    if (is_problematic_name(path)) stats.problematic_names++;
+
+    char *name = strrchr(path, '/');
+    name = name ? name + 1 : (char *)path;
+    if (is_problematic_name(name)) {
+        stats.problematic_names++;
+        printf("Problematic name found: %s\n", path);
+    }
 
     printf("%s: %s\n", path, inode_type(st.st_mode));
 }
@@ -118,15 +121,17 @@ char *inode_type(mode_t mode) {
 }
 
 void explore_directory(const char *path) {
-
     DIR *dirp = opendir(path);
     struct dirent *entry;
 
     if (dirp == NULL) {
-        fprintf(stderr,"Can not open directory %s:%s\\n",path,strerror(errno));
-        return;
+        fprintf(stderr, "Cannot open directory %s: %s\n", path, strerror(errno));
         stats.error_count++;
+        return;
     }
+
+    // Count the directory itself
+    file_stats(path);
 
     errno = 0; 
 
@@ -136,16 +141,10 @@ void explore_directory(const char *path) {
         }
 
         char full_path[1024];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
         if (snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name) >= sizeof(full_path)) {
             fprintf(stderr, "Path too long: %s/%s\n", path, entry->d_name);
             stats.error_count++;
             continue;
-        }
-        if (is_problematic_name(entry->d_name)) {
-            stats.problematic_names++;
-            printf("Problematic name found: %s\n", full_path);
         }
 
         file_stats(full_path);
@@ -157,16 +156,14 @@ void explore_directory(const char *path) {
     }
 
     if (errno != 0) {
-        fprintf(stderr,"Can not read directory %s:%s\\n",path,strerror(errno));
+        fprintf(stderr, "Cannot read directory %s: %s\n", path, strerror(errno));
         stats.error_count++;
     }
 
     closedir(dirp);
 }
 
-
 int main(int argc, char *argv[]) {
-
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <directory>\n", argv[0]);
         return 1;
@@ -177,4 +174,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
