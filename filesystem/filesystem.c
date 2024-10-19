@@ -52,7 +52,6 @@ int is_symlink_resolvable(const char *path) {
         return 0;
     }
     
-    // Verify that it's actually a symlink
     if (!S_ISLNK(st.st_mode)) {
         return 1;
     }
