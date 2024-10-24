@@ -1,2 +1,6 @@
-concatenation/kit_test_results.txt
-concatenation/kit
+kit/kit_test_results.txt
+kit/kit
+kit/.DS_Store
+filesystem/a.out
+*.DS_Store
+.vscode/

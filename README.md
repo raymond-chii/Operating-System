@@ -15,10 +15,10 @@ Process large files efficiently
 
 For more details, see the kit project README.
 
-2. [Future Project Name]
+2. filesystem
 [Brief description of the next project to be added]
 
-3. [Another Future Project Name]
+3. shell program
 [Brief description of another future project]
 
 
