@@ -1,0 +1,4 @@
+cd /some/directory
+pwd
+/some/directory
+ls -l >ls.out
