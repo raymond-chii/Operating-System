@@ -3,8 +3,7 @@
 
 #include <stdio.h>
 
-struct Redirection
-{
+struct Redirection {
     char *input_file;
     char *output_file;
     char *error_file;
@@ -12,8 +11,7 @@ struct Redirection
     int append_error;
 };
 
-struct Command
-{
+struct Command {
     char *command;
     char **args;
     int argc;
@@ -24,5 +22,7 @@ struct Command
 struct Command *parser(char *line);
 int is_comment(const char *line);
 int is_redirection(const char *token);
+
+void debug_print_command(const struct Command *cmd);
 
 #endif

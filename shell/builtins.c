@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
 
 extern int last_exit_status;
 
@@ -15,22 +17,38 @@ int is_builtin(const char *command){
     );
 };
 
-int builtin_cd(struct Command *cmd){
-
+int builtin_cd(struct Command *cmd) {
+    const char *dir;
+    
+    // If no directory specified, use HOME
     if (cmd->args[1] == NULL) {
-        if (chdir(getenv("HOME")) != 0) {
-            perror(getenv("HOME"));
+        dir = getenv("HOME");
+        if (dir == NULL) {
+            fprintf(stderr, "cd: HOME not set\n");
             return 1;
         }
-        return 0;
+    } else {
+        dir = cmd->args[1];
     }
 
-    if (chdir(cmd->args[1]) != 0) {
-        printf("cd: %s: No such file or directory\n", cmd->args[1]);
+    if (chdir(dir) == -1) {
+        switch (errno) {
+            case ENOENT:
+                fprintf(stderr, "cd: %s: No such file or directory\n", dir);
+                break;
+            case EACCES:
+                fprintf(stderr, "cd: %s: Permission denied\n", dir);
+                break;
+            case ENOTDIR:
+                fprintf(stderr, "cd: %s: Not a directory\n", dir);
+                break;
+            default:
+                perror("cd");
+        }
         return 1;
     }
     return 0;
-};
+}
 
 int builtin_pwd(struct Command *cmd){
 

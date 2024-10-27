@@ -1,4 +1,89 @@
-cd /some/directory
+# test1.sh
+
+(3.11.0) raymondchi@Raymonds-MBP shell % ./test1.sh         
+Child process 6353 exited normally
+Real: 0.005s User: 0.001s Sys: 0.003s
+Child process 6354 exited normally
+Real: 0.004s User: 0.001s Sys: 0.002s
+total 328
+-rw-r--r--  1 raymondchi  staff    443 Oct 27 13:37 Makefile
+-rw-r--r--  1 raymondchi  staff     68 Oct 24 03:30 README.md
+-rw-r--r--  1 raymondchi  staff   2402 Oct 27 13:48 builtins.c
+-rw-r--r--  1 raymondchi  staff    262 Oct 26 20:19 builtins.h
+-rw-r--r--  1 raymondchi  staff   3704 Oct 27 16:36 builtins.o
+-rwxr-xr-x  1 raymondchi  staff  16840 Oct 27 16:53 dumpcore
+-rw-r--r--  1 raymondchi  staff    151 Oct 27 16:52 dumpcore.c
+-rw-r--r--  1 raymondchi  staff   5310 Oct 27 15:29 executor.c
+-rw-r--r--  1 raymondchi  staff    509 Oct 27 13:40 executor.h
+-rw-r--r--  1 raymondchi  staff   5424 Oct 27 16:36 executor.o
+-rw-r--r--  1 raymondchi  staff   9093 Oct 24 15:23 instruction.md
+-rwxr-xr-x  1 raymondchi  staff  35768 Oct 27 16:38 main
+-rw-r--r--  1 raymondchi  staff   1711 Oct 27 16:38 main.c
+-rw-r--r--  1 raymondchi  staff   2448 Oct 27 16:38 main.o
+-rw-r--r--  1 raymondchi  staff   3986 Oct 27 16:35 parser.c
+-rw-r--r--  1 raymondchi  staff    491 Oct 27 15:50 parser.h
+-rw-r--r--  1 raymondchi  staff   4512 Oct 27 16:36 parser.o
+drwxr-xr-x  3 raymondchi  staff     96 Oct 27 16:49 test
+-rw-r--r--  1 raymondchi  staff   1835 Oct 27 14:40 test.txt
+-rwxr-xr-x  1 raymondchi  staff    337 Oct 27 15:11 test1.sh
+-rwxr-xr-x  1 raymondchi  staff    667 Oct 27 16:43 test2.sh
+-rwxr-xr-x  1 raymondchi  staff    165 Oct 27 16:53 test3.sh
+-rw-r--r--  1 raymondchi  staff   3586 Oct 26 15:26 test_parser.c
+-rw-r--r--  1 raymondchi  staff     18 Oct 27 16:55 testfile.out
+-rw-r--r--  1 raymondchi  staff     18 Oct 27 16:55 testfile2.out
+Child process 6355 exited normally
+Real: 0.006s User: 0.001s Sys: 0.002s
+(3.11.0) raymondchi@Raymonds-MBP shell % echo $?
+17
+(3.11.0) raymondchi@Raymonds-MBP shell % 
+
+# test2.sh
+
+(3.11.0) raymondchi@Raymonds-MBP shell % ./test2.sh
+/private/tmp
+/Users/raymondchi
+testfile.out: Permission denied
+Child process exited with return value 1
+Real: 0.001s User: 0.000s Sys: 0.000s
+lssssssss: command not found
+Child process exited with return value 127
+Real: 0.001s User: 0.000s Sys: 0.000s
+Child process 6830 exited normally
+Real: 0.003s User: 0.001s Sys: 0.001s
+testfile.out: Permission denied
+Child process exited with return value 1
+Real: 0.001s User: 0.000s Sys: 0.000s
+end of file read, exiting shell with exit code 1
+(3.11.0) raymondchi@Raymonds-MBP shell % 
+
+
+# follow ps example
+
+(3.11.0) raymondchi@Raymonds-MBP shell % ./main
+cd test
 pwd
-/some/directory
+/Users/raymondchi/Desktop/github/Operating-System/shell/test
 ls -l >ls.out
+Child process 7512 exited normally
+Real: 0.006s User: 0.001s Sys: 0.002s
+cat ls.out
+total 0
+-rw-r--r--  1 raymondchi  staff  0 Oct 27 16:57 ls.out
+Child process 7625 exited normally
+Real: 0.009s User: 0.001s Sys: 0.004s
+ls asfljsakfjasklf
+ls: asfljsakfjasklf: No such file or directory
+Child process exited with return value 1
+Real: 0.014s User: 0.001s Sys: 0.006s
+./dumpcore
+./dumpcore: No such file or directory
+Child process exited with return value 127
+Real: 0.002s User: 0.000s Sys: 0.001s
+cd ..
+./dumpcore
+Child process exited with signal 11 (Segmentation fault)
+Real: 0.047s User: 0.001s Sys: 0.003s
+echo $?
+139
+Child process 8182 exited normally
+Real: 0.008s User: 0.001s Sys: 0.003s
