@@ -5,32 +5,6 @@
 
 extern int last_exit_status;
 
-void debug_print_command(const struct Command *cmd) {
-    if (!cmd) {
-        printf("Command struct is NULL\n");
-        return;
-    }
-
-    printf("Command: %s\n", cmd->command ? cmd->command : "NULL");
-    
-    printf("Arguments (%d):\n", cmd->argc);
-    for (int i = 0; i < cmd->argc; i++) {
-        printf("  args[%d]: %s\n", i, cmd->args[i] ? cmd->args[i] : "NULL");
-    }
-
-    printf("Redirections:\n");
-    if (cmd->redirection) {
-        printf("  Input file: %s\n", cmd->redirection->input_file ? cmd->redirection->input_file : "NULL");
-        printf("  Output file: %s\n", cmd->redirection->output_file ? cmd->redirection->output_file : "NULL");
-        printf("  Error file: %s\n", cmd->redirection->error_file ? cmd->redirection->error_file : "NULL");
-        printf("  Append output: %d\n", cmd->redirection->append_output);
-        printf("  Append error: %d\n", cmd->redirection->append_error);
-    } else {
-        printf("  No redirections\n");
-    }
-}
-
-
 int is_comment(const char *line)
 {
     return line[0] == '#';

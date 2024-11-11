@@ -13,7 +13,7 @@ parser.o: parser.c parser.h
 builtins.o: builtins.c builtins.h
 	$(CC) $(CFLAGS) -c builtins.c
 
-executor: executor.c executor.h
+executor.o: executor.c executor.h
 	$(CC) $(CFLAGS) -c executor.c
 
 clean:
