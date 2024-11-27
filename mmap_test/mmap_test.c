@@ -8,7 +8,10 @@
 
 
 void signal_handler(int signum) {
+    printf("Signal %d received\n", signum);
     exit(signum);
+    
+    unlink("test1.txt"); 
 }
 
 int test1(){
@@ -20,7 +23,9 @@ int test1(){
 //
 // so I ran it in Docker and got it to return 11 which is SIGSEGV
 
-    int fd = open("test.txt", O_RDWR | O_CREAT, 0666);
+    unlink("test1.txt"); 
+
+    int fd = open("test1.txt", O_RDWR | O_CREAT, 0666);
     if (fd == -1){
         perror("Error opening file");
         return 255;
@@ -46,6 +51,7 @@ int test1(){
 
     munmap(mapped, 4096);
     close(fd);
+    unlink("test1.txt"); 
 
     return (mapped[0] == 'H') ? 0 : 255;
 
@@ -61,7 +67,9 @@ int test2() {
 // immediately and transparently visible to this or any other process
 // through the traditional system calls such as read."
 
-    int fd = open("test.txt", O_RDWR | O_CREAT, 0666);
+    unlink("test2.txt"); 
+
+    int fd = open("test2.txt", O_RDWR | O_CREAT, 0666);
     write(fd, "A", 1);
     
     char *mapped = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -79,8 +87,9 @@ int test2() {
     read(fd, &buf, 1);
     printf("After read: %c\n", buf);
 
-    close(fd);
     munmap(mapped, 4096);
+    close(fd);
+    unlink("test2.txt"); 
 
     return (buf == 'B') ? 0 : 1;
 }
@@ -94,7 +103,9 @@ int test3(){
 // that virtual page and the file is broken. Thus writes to a MAP_PRIV ATE region do NOT
 // cause the associated file to be modified." 
 
-    int fd = open("test.txt", O_RDWR | O_CREAT, 0666);
+    unlink("test3.txt");
+
+    int fd = open("test3.txt", O_RDWR | O_CREAT, 0666);
     write(fd, "A", 1);
     
     char *mapped = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
@@ -111,22 +122,27 @@ int test3(){
     char buf;
     read(fd, &buf, 1);
     printf("After read: %c\n", buf);
-
-    close(fd);
+    
     munmap(mapped, 4096);
+    close(fd);
+    unlink("test3.txt");
 
     return (buf == 'B') ? 0 : 1;
 }
 
 int test4() {
 
-    int fd = open("test.txt", O_RDWR | O_CREAT, 0666);
+// MacOS and docker both return 0, and passed on reading back 0
+
+    unlink("test4.txt");
+
+    int fd = open("test4.txt", O_RDWR | O_CREAT, 0666);
     for (int i = 0; i < 4101; i++) {
         write(fd, "A", 1);
     }
     close(fd);
 
-    fd = open("test.txt", O_RDWR);
+    fd = open("test4.txt", O_RDWR);
     char *mapped = mmap(NULL, 8192, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (mapped == MAP_FAILED) {
         perror("mmap");
@@ -155,8 +171,12 @@ int test4() {
     lseek(fd, 4101, SEEK_SET);
     read(fd, buf, 1);
 
+    munmap(mapped, 8192);
+    close(fd);
+    unlink("test4.txt");
+
     return (buf[0] == 'X') ? 0 : 1;
-    
+
 }
 
 int main(int argc, char **argv){
@@ -168,22 +188,23 @@ int main(int argc, char **argv){
 
     int test_number = atoi(argv[1]);
 
-    switch(test_number){
+    switch(test_number) {
         case 1:
-            printf("Test 1\n");
+            printf("Test 1: Testing PROT_READ violation\n");
             return test1();
         case 2:
-            printf("Test 2\n");
+            printf("Test 2: Testing MAP_SHARED behavior\n");
             return test2();
         case 3:
-            printf("Test 3\n");
+            printf("Test 3: Testing MAP_PRIVATE behavior\n");
             return test3();
         case 4:
-            printf("Test 4\n");
+            printf("Test 4: Testing writing into a hole\n");
             return test4();
         default:
             fprintf(stderr, "Invalid test number\n");
             return 1;
     }
+
     return 0;
 }
