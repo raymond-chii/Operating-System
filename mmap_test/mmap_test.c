@@ -46,7 +46,9 @@ int test1(){
 
     munmap(mapped, 4096);
     close(fd);
+
     return (mapped[0] == 'H') ? 0 : 255;
+
 }
 
 int test2() {
@@ -126,6 +128,13 @@ int test4() {
 
     fd = open("test.txt", O_RDWR);
     char *mapped = mmap(NULL, 8192, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (mapped == MAP_FAILED) {
+        perror("mmap");
+        close(fd);
+        return 1;
+    }
+
+// reading back from 4101 to 8192 and it returns 0
 
     for (int i = 4101; i < 8192; i++) {
         if (mapped[i] != 0) {
@@ -136,17 +145,18 @@ int test4() {
 
     mapped[4101] = 'X';
 
+// creating "hole" between 4101 and 4116
+
     lseek(fd, 4116, SEEK_SET);
     write(fd, "Y", 1);
 
+// checked X and its visible
     char buf[1];
     lseek(fd, 4101, SEEK_SET);
     read(fd, buf, 1);
-    if (buf[0] == 'X') {
-        return 0;
-    } else {
-        return 1;
-    }
+
+    return (buf[0] == 'X') ? 0 : 1;
+    
 }
 
 int main(int argc, char **argv){
