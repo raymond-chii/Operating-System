@@ -14,7 +14,6 @@ struct shared_data {
     int signal_handler_calls[NUM_TASKS];
 };
 
-// Make shared data accessible to signal handler
 static struct shared_data *shared_ptr;
 
 static void sigusr1_handler(int sig) {
@@ -22,13 +21,6 @@ static void sigusr1_handler(int sig) {
 }
 
 void make_moves(struct shared_data *shared, int task_num, int num_moves) {
-    // Set up signal handler
-    struct sigaction sa;
-    sa.sa_handler = sigusr1_handler;
-    sa.sa_flags = SA_RESTART;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGUSR1, &sa, NULL);
-    
     switch(task_num) {
         case 0: // Move A -> B
             for(int i = 0; i < num_moves; i++) {
@@ -103,12 +95,20 @@ int main(int argc, char *argv[]) {
         if(fork() == 0) {
             // Child process
             my_procnum = i;
+            
+            // Set up signal handler once for this child process
+            struct sigaction sa;
+            sa.sa_handler = sigusr1_handler;
+            sa.sa_flags = SA_RESTART;
+            sigemptyset(&sa.sa_mask);
+            sigaction(SIGUSR1, &sa, NULL);
+            
             printf("VCPU %d starting, pid %d\n", i, getpid());
             
             make_moves(shared, i, num_moves);
             
             printf("Child %d (pid %d) done, signal handler was invoked %d times\n",
-                   i, getpid(), shared->signal_handler_calls[i]);
+                i, getpid(), shared->signal_handler_calls[i]);
             printf("VCPU %d done\n", i);
             exit(0);
         }
@@ -119,7 +119,6 @@ int main(int argc, char *argv[]) {
     while(wait(NULL) > 0);
 
     printf("All children done!\n");
-    printf("Sem# val Sleeps Wakes\n");
     
     printf("Semaphore A count=%d\n", shared->sem_A.count);
     for(int i = 0; i < NUM_TASKS; i++) {

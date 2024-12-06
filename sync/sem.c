@@ -38,16 +38,10 @@ int sem_try(struct sem *s) {
 
 void sem_wait(struct sem *s) {
     sigset_t mask, oldmask;
-    struct sigaction sa;
     
-    sa.sa_handler = sigusr1_handler;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGUSR1, &sa, NULL);
-    
+    // Only handle signal masking here
     sigemptyset(&mask);
     sigaddset(&mask, SIGUSR1);
-    
     sigprocmask(SIG_BLOCK, &mask, &oldmask);
     
     while (1) {
@@ -64,7 +58,6 @@ void sem_wait(struct sem *s) {
             return;
         }
         
-        printf("VCPU %d going to sleep\n", my_procnum);
         s->waiting_pids[s->tail] = getpid();
         s->vcpu_map[s->tail] = my_procnum;
         s->tail = (s->tail + 1) % N_PROCS;
@@ -83,10 +76,9 @@ void sem_inc(struct sem *s) {
     
     printf("VCPU %d incrementing sem, current count=%d\n", my_procnum, s->count);
     
-    if (s->num_waiting > 0) {
-        int wake_idx = s->head;
-        pid_t pid = s->waiting_pids[wake_idx];
-        int vcpu = s->vcpu_map[wake_idx];
+    if (s->num_waiting > 0 && s->count > 0) {
+        pid_t pid = s->waiting_pids[s->head];
+        int vcpu = s->vcpu_map[s->head];
         
         printf("VCPU %d waking up VCPU %d\n", my_procnum, vcpu);
         
