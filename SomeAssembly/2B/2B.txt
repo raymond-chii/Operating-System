@@ -1,0 +1,23 @@
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2B % as -o hello.o hello.s
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2B % ld -o hello hello.o -lSystem -syslibroot `xcrun -sdk macosx --show-sdk-path` -e _start -arch arm64
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2B % ls
+2B.txt          hello           hello.s
+Dockerfile      hello.o
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2B % ./hello
+Hello, world!
+zsh: illegal hardware instruction  ./hello
+
+I can't strace it with docker. It doesn't run. I tried building it with docker and it doesnt work as well. 
+
+# Dockerfile
+FROM --platform=linux/arm64 ubuntu:latest
+
+RUN apt-get update && apt-get install -y strace
+
+WORKDIR /app
+
+COPY hello .
+
+RUN chmod +x hello
+
+CMD ["strace", "./hello"]

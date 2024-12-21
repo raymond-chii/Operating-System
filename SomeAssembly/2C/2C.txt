@@ -1,0 +1,6 @@
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2C % as -o hello.o hello.s
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2C % ld -o hello hello.o -lSystem -syslibroot `xcrun -sdk macosx --show-sdk-path` -e _start -arch arm64
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2C % ./hello
+Hello, world!
+(3.11.0) raymondchi@Raymonds-MacBook-Pro 2C % echo $?
+0
